@@ -44,37 +44,37 @@ def run():
 def request(conn_to_client, port):
 	msg=conn_to_client.recv(1024).decode()
 	#conn_to_client.close()
-	filename=parse(msg)
-	request_handler(filename, conn_to_client)
+	fname=parse(msg)
+	request_handler(fname, conn_to_client)
 
 	
 
 def parse(msg):
 	splitMessage = msg.split('\n')
-	filename = splitMessage[0].split(':')[1].strip()
-	return filename
+	fname = splitMessage[0].split(':')[1].strip()
+	return fname
 
 #todo parse to return file object
 	
-def request_handler(filename, conn_to_client):
-	if filename in  os.listdir("cached_files/"):
-		print("CHACHE HIT", filename)
+def request_handler(fname, conn_to_client):
+	if fname in  os.listdir("cached_files/"):
+		print("CHACHE HIT", fname)
 		#returning file TODO
-		filename="cached_files/" +str(filename)
-		f = open(filename,'rb')
+		fname="cached_files/" +str(fname)
+		f = open(fname,'rb')
 		l = f.read(1024)
 		conn_to_client.send(l)
 		print('CACHE SENT ',repr(l))
 		f.close()
 	else:
-		print("CACHE MISS", filename)
+		print("CACHE MISS", fname)
 		#NEW SOCKET
 		time.sleep(3)
 		socketwserver=socket(AF_INET,SOCKSTREAM)
 	
 		socketwserver.connect((gethostbyname(gethostname()),5000))
 	
-		request= "CACHE REQUEST: " + str(filename)
+		request= "CACHE REQUEST: " + str(fname)
 		socketwserver.send((request).encode())
 		responce=socketwserver.recv(1024).decode()
 		socketwserver.close()
@@ -86,8 +86,8 @@ def request_handler(filename, conn_to_client):
 		print('CACHE SENT ',repr(l))
 		#todo
 		#saving the file into my database
-		filename="cached_files/" +str(filename)
-		f_new= open(filename,"w+")
+		fname="cached_files/" +str(fname)
+		f_new= open(fname,"w+")
 		f_new.write(repr(l))
 		f_new.close()
 		
