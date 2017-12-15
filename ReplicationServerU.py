@@ -106,7 +106,7 @@ def main():
     slaves = []
 
     # initialising other multiple slave servers
-    for i in range(config.REP_SERVER_COPIES):
+    for i in range(config.REPSERVERCOPIES):
         port = int(sys.argv[1]) + (i + 1)
         slaves.append(port)
         ReplicationSlave(port)
