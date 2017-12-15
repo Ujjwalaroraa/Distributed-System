@@ -169,4 +169,4 @@ class TcpServer(object):
 
     # return an error message to the user
     def error(own, conf, msg):
-        own.send_msg(conf, config.ERROR_MSG.format(msg))
+        own.send_msg(conf, config.ERRORMSG.format(msg))
