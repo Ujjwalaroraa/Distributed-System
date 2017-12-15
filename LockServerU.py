@@ -39,7 +39,7 @@ class LockServerU(TcpServer):
                     del own.locks[file_id]
                     own.send_msg(conf, config.SUCCESS.format("Unlocked"))
                 # otherwise returning failure if file is not in array
-                elif file_id not in self.locks:
+                elif file_id not in own.locks:
                     own.send_msg(conf, config.FAILURE.format("File not locked"))
                 # otherwise returning file locked by another client
                 else:
