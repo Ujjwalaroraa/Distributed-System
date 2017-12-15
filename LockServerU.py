@@ -25,7 +25,7 @@ class LockServerU(TcpServer):
                 # otherwise okay to lock file for client and returning success
                 else:
                     own.locks[file_id] = client
-                    own.send_msg(conn, config.SUCCESS.format("Locked"))
+                    own.send_msg(conf, config.SUCCESS.format("Locked"))
             finally:
                 own.locks_mutex.release()
 
