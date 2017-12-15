@@ -32,7 +32,7 @@ class DirectoryServer(TcpServer):
                 if var[0] in response['files']:
                     own.sendmsg(conf, config.RETURNFILEDETAILS.format(response['id'], response['ip'], response['port']))
                 else:
-                    own.error(conn, "File not found.")
+                    own.error(conf, "File not found.")
             
             except KeyError:
                 # returning the file not found if file_id key not in files dict
