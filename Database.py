@@ -1,16 +1,16 @@
 import os
 import os.path
 
-def find_file(filename):
-	print("the file we are looking for is ", filename)
+def ffile(fname):
+	print("the file i am looking for is ", fname)
 
-	if filename in  os.listdir("DBM_File/"):
-		print("file exists on db")
-		file_path= "DBM_file/" + filename
-		return file_path
+	if fname in  os.listdir("DBM_File/"):
+		print("file is  existing on db")
+		fpath= "DBM_file/" + fname
+		return fpath
 	else:
-		print("file does not exist on db. creating file")
-		file_path= "DBM_file/" + filename
-		f=open(file_path,"w+")
+		print("file is not existing on db. creating file")
+		fpath= "DBM_file/" + fname
+		f=open(fpath,"w+")
 		f.close()
-		return file_path
+		return fpath
