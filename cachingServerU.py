@@ -13,7 +13,7 @@ def run():
 	BUFFER_SIZE=1024
 	
 	#SETTING 
-	serverSocket = socket(AF_INET,SOCK_STREAM)
+	serverSocket = socket(AF_INET,SOCKSTREAM)
 	serverSocket.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1)
 	serverSocket.bind((gethostbyname(gethostname()), port))
 
@@ -70,7 +70,7 @@ def request_handler(filename, conn_to_client):
 		print("CACHE MISS", filename)
 		#NEW SOCKET
 		time.sleep(3)
-		socketwserver=socket(AF_INET,SOCK_STREAM)
+		socketwserver=socket(AF_INET,SOCKSTREAM)
 	
 		socketwserver.connect((gethostbyname(gethostname()),5000))
 	
