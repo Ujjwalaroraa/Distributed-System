@@ -9,11 +9,11 @@ import re
 from time import sleep
 from random import randrange
 
-messages = [config.RETURN_FILE_DATA, config.RETURN_FILE_DETAILS, config.SUCCESS, config.FAILURE]
+messages = [config.RETURNFILEDATA, config.RETURNFILEDETAIL, config.SUCCESS, config.FAILURE]
 
 def send_req(ip, port, data):
     # connecting the server
-    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    s = socket.socket(socket.AF_INET, socket.SOCKSTREAM)
     s.connect((ip, port)) 
     s.settimeout(2)
     s.sendall(data)
@@ -38,7 +38,7 @@ print "======================"
 name = raw_input("Enter client name: ")
 
 # getting the file details from DS
-(req, vars) = send_req("localhost", config.DIR_SERVER, config.REQUEST_FILE_DETAILS.format("test.txt", "Desktop", "WRITE"))
+(req, vars) = send_req("localhost", config.DIR_SERVER, config.REQUESTFILEDETAIL.format("test.txt", "Desktop", "WRITE"))
 file_id = vars[0]
 file_ip = vars[1]
 file_port = int(vars[2])
@@ -46,17 +46,17 @@ raw_input("Press Enter to continue...\n")
 
 # writing the file to server
 file = open('test.txt', 'r')
-send_req(file_ip, file_port, config.WRITE_FILE.format(file_id, name, file.read()))
+send_req(file_ip, file_port, config.WRITEFILE.format(file_id, name, file.read()))
 raw_input("Press Enter to continue...\n")
 
 # getting lock on file
-send_req("localhost", config.LOCK_SERVER, config.REQUEST_LOCK.format(file_id, name))
+send_req("localhost", config.LOCKSERVER, config.REQUESTLOCK.format(file_id, name))
 raw_input("Press Enter to continue...\n")
 
 # reading the file from server
-send_req(file_ip, file_port, config.READ_FILE.format(file_id, name))
+send_req(file_ip, file_port, config.READFILE.format(file_id, name))
 raw_input("Press Enter to continue...\n")
 
 # unlocking the file
-send_req("localhost", config.LOCK_SERVER, config.REQUEST_UNLOCK.format(file_id, name))
+send_req("localhost", config.LOCKSERVER, config.REQUESTUNLOCK.format(file_id, name))
 raw_input("Press Enter to continue...\n")
