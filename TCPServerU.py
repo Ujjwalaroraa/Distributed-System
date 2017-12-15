@@ -56,7 +56,7 @@ class TcpServer(object):
 
     def __init__(own, port):
         # create socket
-        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        s = socket.socket(socket.AF_INET, socket.SOCKSTREAM)
         s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 
         # queue object to store requests
@@ -155,7 +155,7 @@ class TcpServer(object):
     # send message to server
     def propagate_msg(own, request, var, server, response_required=True):
         # connect to socket
-        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        s = socket.socket(socket.AF_INET, socket.SOCKSTREAM)
         s.connect(("localhost", server)) 
 
         # send data
