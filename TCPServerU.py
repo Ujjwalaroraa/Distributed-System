@@ -84,7 +84,7 @@ class TcpServer(object):
     def accept(own, conf, addr):
         # cache queue size and get threshold
         qsize = own.request.qsize()
-        queue_margin = int(math.ceil(self.num_threads * (self.QUEUE_THRESHOLD / 100.0)))
+        queue_margin = int(math.ceil(own.num_threads * (own.QUEUE_THRESHOLD / 100.0)))
 
         # check if queue size is between num_threads and (num_threads - margin)
         if qsize >= (own.num_threads - queue_margin) and own.num_threads != own.MAX_THREADS:
