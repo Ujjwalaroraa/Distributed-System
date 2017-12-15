@@ -77,7 +77,7 @@ class ReplicationServer(TcpServer):
                         # sending back file data if requested 
                         if request == config.READFILE:
                             f = open(os.path.join(str(own.port), file_id), 'r')
-                            own.send_msg(conf, config.RETURN_FILE_DATA.format(f.read()))
+                            own.send_msg(conf, config.RETURNFILEDATA.format(f.read()))
                             f.close()
 
                         # deleting the file from index if requested 
