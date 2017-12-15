@@ -8,14 +8,14 @@ import random
 from TcpServer import TcpServer
 
 class DirectoryServer(TcpServer):
-    message = {config.REQUESTfileDETAILS}
+    message = {config.REQUESTFILEDETAILS}
     server = [config.REPLICATIONSERVER + (x * (config.REPLICATIONSERVERCOPIES + 1)) for x in range(config.REPLICATIONSERVER)]
     folder = {}
 
     # overriding request processing function
     def process_req(own, conf, req, var):
         # requesting file details from directory
-        if req == config.REQUESTfileDETAILS:
+        if req == config.REQUESTFILEDETAILS:
             try:
                 # adding the folder to directory listing if writing
                 if var[2] == 'WRITE':
@@ -30,15 +30,15 @@ class DirectoryServer(TcpServer):
 
                 # checking if the file is in directory
                 if var[0] in response['files']:
-                    own.sendmsg(conf, config.RETURN_FILE_DETAILS.format(response['id'], response['ip'], response['port']))
+                    own.sendmsg(conf, config.RETURNFILEDETAILS.format(response['id'], response['ip'], response['port']))
                 else:
                     own.error(conn, "File not found.")
             
             except KeyError:
                 # returning the file not found if file_id key not in files dict
-                self.error(conf, "File not found.")
+                own.error(conf, "File not found.")
 
 def main():
-    print "Directory Server started on " + str(config.DIR_SERVER)
-    server = DirectoryServer(config.DIR_SERVER)
+    print "Directory Server started on " + str(config.DIRECTORYSERVER)
+    server = DirectoryServer(config.DIRECTORYSERVER)
 if __name__ == "__main__": main()
