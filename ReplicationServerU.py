@@ -9,94 +9,94 @@ from threading import Thread
 from TcpServer import TcpServer
 
 class ReplicationSlave(Thread):
-    def __init__(self, port):
+    def __init__(own, port):
         print "Replication Slave " + str(port) + " Created!"
-        Thread.__init__(self)
-        self.port = port
-        self.daemon = True
-        self.start()
-    def run(self):
-        ReplicationServer(self.port)
+        Thread.__init__(own)
+        own.port = port
+        own.daemon = True
+        own.start()
+    def run(own):
+        ReplicationServer(own.port)
 
 class ReplicationServer(TcpServer):
-    messages = {config.READ_FILE, config.WRITE_FILE, config.DELETE_FILE, config.SUCCESS, config.FAILURE}
-    slaves = []
-    files = {}
+    message = {config.READFILE, config.WRITEFILE, config.DELETEFILE, config.SUCCESS, config.FAILURE}
+    slave = []
+    file = {}
 
     # overriding init function to import slaves list
-    def __init__(self, port, slaves=[]):
-        self.slaves = slaves
-        self.is_slave = True if slaves == [] else False
+    def __init__(own, port, slave=[]):
+        own.slave = slave
+        own.is_slave = True if slave == [] else False
         if not os.path.exists(str(port)):
             os.makedirs(str(port))
-        TcpServer.__init__(self, port)
+        TcpServer.__init__(own, port)
 
     # overriding request processing function
-    def process_req(self, conn, request, vars):
+    def process_req(own, conf, request, var):
         # requesting file data from replication server
-        if request == config.READ_FILE or request == config.WRITE_FILE or request == config.DELETE_FILE:
-            file_id = vars[0]
-            client = vars[1]
+        if request == config.READFILE or request == config.WRITEFILE or request == config.DELETEFILE:
+            file_id = var[0]
+            client = var[1]
 
             # updating file data if file update is asked for
-            if request == config.WRITE_FILE:
-                data = vars[2]
+            if request == config.WRITEFILE:
+                data = var[2]
 
                 # checking with lock server if it permits 
-                if not self.is_slave:
-                    (resp, resp_vars) = self.propagate_msg(config.REQUEST_USE, (file_id, client), config.LOCK_SERVER)
+                if not own.is_slave:
+                    (resp, resp_vars) = own.propagate_msg(config.REQUESTUSE, (file_id, client), config.LOCKSERVER)
 
                 # writing file to all servers if it is allowed
-                if self.is_slave or resp == config.SUCCESS:
-                    self.files[file_id] = True
+                if own.is_slave or resp == config.SUCCESS:
+                    own.files[file_id] = True
 
                     # writing file to disk
-                    f = open(os.path.join(str(self.port), file_id), 'w')
+                    f = open(os.path.join(str(own.port), file_id), 'w')
                     f.write(data)
                     f.close()
 
                     # propagating request to all slaves if master
-                    for slave in self.slaves:
+                    for slave in own.slaves:
                         print "PROPAGATING WRITE REQUEST TO " + str(slave)
-                        self.propagate_msg(request, vars, slave, False)
+                        own.propagate_msg(request, var, slave, False)
                     # responding to the  client with success message
-                    if not self.is_slave:
-                        self.send_msg(conn, config.SUCCESS.format("File written successfully."))
+                    if not own.is_slave:
+                        own.send_msg(conf, config.SUCCESS.format("File written successfully."))
                 else:
-                    self.send_msg(conn, resp.format(*resp_vars))
+                    own.send_msg(conf, resp.format(*resp_var))
 
             else:
                 # to check if the file exists for read and delete
-                if file_id in self.files:
+                if file_id in own.files:
 
                     # to check if the lock server permits
-                    if not self.is_slave:
-                        (resp, resp_vars) = self.propagate_msg(config.REQUEST_USE, (file_id, client), config.LOCK_SERVER)
+                    if not own.is_slave:
+                        (resp, resp_var) = own.propagate_msg(config.REQUESTUSE, (file_id, client), config.LOCKSERVER)
 
-                    if self.is_slave or resp == config.SUCCESS:
+                    if own.is_slave or resp == config.SUCCESS:
                         # sending back file data if requested 
-                        if request == config.READ_FILE:
-                            f = open(os.path.join(str(self.port), file_id), 'r')
-                            self.send_msg(conn, config.RETURN_FILE_DATA.format(f.read()))
+                        if request == config.READFILE:
+                            f = open(os.path.join(str(own.port), file_id), 'r')
+                            own.send_msg(conf, config.RETURN_FILE_DATA.format(f.read()))
                             f.close()
 
                         # deleting the file from index if requested 
-                        elif request == config.DELETE_FILE:
-                            del self.files[file_id]
+                        elif request == config.DELETEFILE:
+                            del own.files[file_id]
 
                             # propagating the request to all slaves
-                            for slave in self.slaves:
+                            for slave in own.slaves:
                                 print "PROPAGATING DELETE REQUEST TO  " + str(slave)
-                                self.propagate_msg(request, vars, slave, False)
+                                own.propagate_msg(request, var, slave, False)
                             # responding with success message
-                            if not self.is_slave:
-                                self.send_msg(conn, config.SUCCESS.format("File deleted successfully."))
+                            if not own.is_slave:
+                                own.send_msg(conf, config.SUCCESS.format("File deleted successfully."))
                     else:
-                        self.send_msg(conn, resp.format(*resp_vars))
+                        own.send_msg(conf, resp.format(*resp_var))
 
                 # else returning "file not found"
                 else:
-                    self.error(conn, "File not found.")
+                    own.error(conf, "File not found.")
 
 def main():
     if len(sys.argv) != 2 or not sys.argv[1].isdigit():
